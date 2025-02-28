@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Dashbord_price2{% endblock %}
+{% block balance %}Всего денег {{balanse.balance}}{% endblock %}
+
+
+{% block content %}
+<div class="container"  style="background-color: #333; padding: 20px;">
+    <h1 style="color: #fff;">Торговля треугольником</h1>
+    <div class="mb-2 container">
+      <button id="runCommandButton" class="btn btn-primary">Обновить данные</button>
+      <button id="runCommandButton2" class="btn btn-primary">Обновить доход</button>
+    </div>
+    <div class="container">
+      <button class="btn btn-primary" ><a href="javascript:void(0);" style="color: #fff;"onclick="changeSort('dohodtyda','dohodtyda')">Покупка с начала</a></button>
+      <button class="btn btn-primary" ><a href="javascript:void(0);" style="color: #fff;" onclick="changeSort('dohodsyda','dohodsyda')">Покупка с конца</a></button>
+    </div>
+    
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p id="modalMessage"></p>
+        </div>
+      </div>
+      {% for item in items %}
+        <div class="card custom-table mt-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Сайт:</strong> {{ item.site }} - {{ item.paur3 }}</p>
+                        <p><strong>Дата обновление пар:</strong> {{ item.datetime_uploder }}</p>
+                        <p><strong>Покупка с начала:</strong> {{ item.dohodtyda }}</p>
+                        <p><strong>покупка с конца:</strong> {{ item.dohodsyda }}</p>
+                        <p><strong>Дата обновления дохода:</strong> {{ item.datadohod }}</p>
+                        <button class="btn btn-primary" data-toggle="collapse" data-target="#details{{ item.id }}">Подробнее</button>
+                        <a href="{% url 'dashboard_price2_detail' item.id %}" target="_blank" class="btn btn-primary">Ссылка на карточку</a>
+                    </div>
+                </div>
+                <div id="details{{ item.id }}" class="collapse">
+                    <p><strong>Пара:</strong> {{ item.paurstart }}</p>
+                    <p><strong>Цена:</strong> {{ item.balance1 }}</p>
+                    <p><strong>Движение валют Пара 1:</strong> 
+                        {% if item.dvizhenie_valut_2 > 2 %}
+                            <span class="text-success">верх</span>
+                        {% elif item.dvizhenie_valut_2 < -2 %}
+                            <span class="text-danger">вниз</span>
+                        {% else %}
+                            среднее
+                        {% endif %}
+                    </p>
+                    <p><strong>Пара 2:</strong> <a href="{{ item.paur2url }}" target="_blank">{{ item.paur2 }}</a></p>
+                    <p><strong>Цена:</strong> {{ item.balance2 }}</p>
+                    <p><strong>Движение валют Пара 2:</strong> 
+                        {% if item.dvizhenie_valut_3 > 2 %}
+                            <span class="text-success">верх</span>
+                        {% elif item.dvizhenie_valut_3 < -2 %}
+                            <span class="text-danger">вниз</span>
+                        {% else %}
+                            среднее
+                        {% endif %}
+                    </p>
+                    <p><strong>Пара 3:</strong> <a href="{{ item.paur3url }}" target="_blank">{{ item.paur3 }}</a></p>
+                    <p><strong>Цена:</strong> {{ item.balance3 }}</p>
+                    <p><strong>Движение валют Пара 3:</strong> 
+                        {% if item.dvizhenie_valut_4 > 2 %}
+                            <span class="text-success">верх</span>
+                        {% elif item.dvizhenie_valut_4 < -2 %}
+                            <span class="text-danger">вниз</span>
+                        {% else %}
+                            среднее
+                        {% endif %}
+                    </p>
+                    <p><strong>Пара Итог:</strong> <a href="{{ item.paurstart2url }}" target="_blank">{{ item.paurstart2 }}</a></p>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if items.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ items.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ items.number }} of {{ items.paginator.num_pages }}.
+            </span>
+
+            {% if items.has_next %}
+                <a href="?page={{ items.next_page_number }}">next</a>
+                <a href="?page={{ items.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+<script>
+    var modal = document.getElementById("myModal");
+    var btn = document.getElementById("runCommandButton");
+    var btn2 = document.getElementById("runCommandButton2");
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+      // Выполнение команды с помощью AJAX
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "{% url 'run_custom_command' %}", true);
+      xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.onload = function() {
+        var response = JSON.parse(xhr.responseText);
+        document.getElementById("modalMessage").innerText = response.message;
+        modal.style.display = "block";
+      };
+      xhr.send();
+    }
+
+    btn2.onclick = function() {
+      // Выполнение команды с помощью AJAX
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "{% url 'run_custom_command2' %}", true);
+      xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.onload = function() {
+        var response = JSON.parse(xhr.responseText);
+        document.getElementById("modalMessage").innerText = response.message;
+        modal.style.display = "block";
+      };
+      xhr.send();
+    }
+
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    function changeSort(params,sort) {
+      var currentUrl = window.location.href;  // Получаем текущий URL
+      var sortParam = params;  // Значение параметра sort по умолчанию
+      var newSort;
+    
+      if (currentUrl.includes(sort+'=')) {
+        var url = new URL(currentUrl);
+        var searchParams = new URLSearchParams(url.search);
+        sortParamr = searchParams.get(sort);  // Получаем текущее значение параметра sort
+        newSort = (sortParamr === sortParam) ? '-'+params : params;  // Изменяем значение параметра sort
+        searchParams.set(sort, newSort);  // Обновляем значение параметра sort
+        url.search = searchParams.toString();  // Устанавливаем новые параметры запроса
+        window.location.href = url.toString();  // Перенаправляем пользователя на новый URL
+      } else {
+        newSort = sortParam;  // Изменяем значение параметра sort
+        var separator = (currentUrl.indexOf('?') !== -1) ? '&' : '?';
+        window.location.href =  '?'+ sort+'=' + newSort;  // Добавляем новый параметр sort
+      }
+    }
+  </script>
+{% endblock %}

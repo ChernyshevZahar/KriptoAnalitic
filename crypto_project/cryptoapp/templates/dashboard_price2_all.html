@@ -1,0 +1,486 @@
+{% extends "base.html" %}
+
+{% block title %}Dashbord_price2{% endblock %}
+{% block balance %}Всего денег {{balanse.balance}}{% endblock %}
+
+{% block content %}
+
+<div class="card custom-table">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-md-3">
+                <p><strong>Сайт: </strong>{{ item.site }}</p>
+                <p><strong>Пара: </strong>{{ item.paurstart }}</p>
+                <p><strong>Цена: </strong>{{ item.balance1 }}</p>
+                <p><strong>Движение валют Пара 1: </strong>{{ item.dvizhenie_valut_2 }}</p>
+                <p><strong>Скорость движения: </strong>{{ item.speed_valute_2 }}</p>
+            </div>
+            <div class="col-12 col-md-3">
+                <p><strong>Пара 2: </strong><a href="{{ item.paur2url }}" target="_blank">{{ item.paur2 }}</a></p>
+                <p><strong>Цена: </strong>{{ item.balance2 }}</p>
+                <p><strong>Движение валют Пара 2: </strong>{{ item.dvizhenie_valut_3 }}</p>
+                <p><strong>Скорость движения: </strong>{{ item.speed_valute_3 }}</p>
+            </div>
+            <div class="col-12 col-md-3">
+                <p><strong>Пара 3: </strong><a href="{{ item.paur3url }}" target="_blank">{{ item.paur3 }}</a></p>
+                <p><strong>Цена: </strong>{{ item.balance3 }}</p>
+                <p><strong>Движение валют Пара 3: </strong>{{ item.dvizhenie_valut_4 }}</p>
+                <p><strong>Скорость движения: </strong>{{ item.speed_valute_4 }}</p>
+            </div>
+            <div class="col-12 col-md-3">
+                <p><strong>Пара Итог: </strong><a href="{{ item.paurstart2url }}" target="_blank">{{ item.paurstart2 }}</a></p>
+                <p><strong>Цена: </strong>{{ item.balance4 }}</p>
+                <p><strong>Разница: </strong>{{ item.dohod }}</p>
+                <p><strong>Покупка с начала: </strong>{{ item.dohodtyda }}</p>
+                <p><strong>Покупка с конца: </strong>{{ item.dohodsyda }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card custom-table mt-2">
+    <div class="card-body">
+        <h2>Доход вперед</h2>
+        <div class="row">
+            <div class="col-12 col-md-2">
+                <p><strong>Сайт: </strong>{{ item.site }}</p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Пара: </strong>{{ item.paurstart }}</p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Цена: </strong>{{ item.sell1 }}</p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Пара 2: </strong><a href="{{ item.paur2url }}" target="_blank">{{ item.paur2 }}</a></p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Цена: </strong>{{ item.sell2 }}</p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Пара 3: </strong><a href="{{ item.paur3url }}" target="_blank">{{ item.paur3 }}</a></p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Цена: </strong>{{ item.buy3 }}</p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Пара Итог: </strong><a href="{{ item.paurstart2url }}" target="_blank">{{ item.paurstart2 }}</a></p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Разница: </strong>{{ item.dohodtyda }}</p>
+            </div>
+            <div class="col-12 col-md-2">
+                <p><strong>Дата: </strong>{{ item.datadohod }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card custom-table mt-2 mb-5">
+    <div class="card-body">
+        <h2>Доход вперед</h2>
+        <form method="post" class="mt-2" id="calculationForm">
+            {% csrf_token %}
+            <div class="form-row align-items-center">
+                <div class="col-auto">
+                    <label for="site" class="col-form-label">Сайт:</label>
+                    <input type="text" class="form-control mb-2" id="site" name="site" value="{{ item.site }}">
+                    <input type="hidden" name="type_dohod" value="vpered">
+                </div>
+                <div class="col-auto">
+                    <label for="balance1" class="col-form-label">{{ item.paurstart }}:</label>
+                    <input type="hidden" name="pair_start" value="{{ item.paurstart }}">
+                    <input type="number" class="form-control mb-2" id="balance1" name="price_start" value="{{ USDTAll }}" step="0.001" onchange="calculate()"> 
+                </div>
+                <div class="col-auto">
+                    <label for="balance1" class="col-form-label">Смогу купить {{ item.paur2 }}:  </label>
+                    <input type="text" class="form-control mb-2" id="result2"   >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">{{ item.paur2 }}:</label>
+                    <input type="hidden" name="pair1" value="{{ item.paur2 }}">
+                    <input type="hidden" name="one_id" value="{{ item.idpaur2 }}">
+                    <input type="hidden" name="dvizhenie_pair1" value="{{ item.dvizhenie_valut_2 }}">
+                    <input type="hidden" name="speed_pair1" value="{{ item.speed_valute_2 }}">
+                    <input type="number" class="form-control mb-2" id="balance2" name="price_pair1" value="{{ item.buy1 }}" step="0.001" onchange="calculate()">
+                </div>
+                <div class="col-auto">
+                    <label for="balance1" class="col-form-label">Смогу купить {{ item.paur3 }}:  </label>
+                    <input type="text" class="form-control mb-2" id="result3">
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">{{ item.paur3 }}:</label>
+                    <input type="hidden" name="pair2" value="{{ item.paur3 }}">
+                    <input type="hidden" name="two_id" value="{{ item.idpaur3 }}">
+                    <input type="hidden" name="dvizhenie_pair2" value="{{ item.dvizhenie_valut_3 }}">
+                    <input type="hidden" name="speed_pair2" value="{{ item.speed_valute_3 }}">
+                    <input type="number" class="form-control mb-2" id="balance3" name="price_pair2" value="{{ item.sell2 }}" step="0.001" onchange="calculate()">
+                </div>
+                <div class="col-auto">
+                    <label for="balance1" class="col-form-label">Смогу купить {{ item.paurstart2 }}:  </label>
+                    <input type="text" class="form-control mb-2" id="result4">
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">{{ item.paurstart2 }}:</label>
+                    <input type="hidden" name="pair_end" value="{{ item.paurstart2 }}">
+                    <input type="hidden" name="theer_id" value="{{ item.idpaur4 }}">
+                    <input type="hidden" name="dvizhenie_end" value="{{ item.dvizhenie_valut_4 }}">
+                    <input type="hidden" name="speed_end" value="{{ item.speed_valute_4 }}">
+                    <input type="number" class="form-control mb-2" id="balance4" name="price_end" value="{{ item.sell3 }}" step="0.001" onchange="calculate()">
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result: </label>
+                    <input type="text" id="result"  >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result rub: </label>
+                   <input type="text" id="resultrub" name="dohod"  >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result fact: </label>
+                    <input type="text" id="resulfactall" onchange="calculatefact()" >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result fact: </label>
+                    <input type="text" id="resulfact"  >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result rub fact: </label>
+                   <input type="text" id="resultrubfact" name="fakt_dohod"  >
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-2">Отправить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="card custom-table mt-2">
+    <div class="card-body">
+        <h2>Доход назад</h2>
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <p><strong>Сайт: </strong>{{ item.site }}</p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Пара: </strong>{{ item.paurstart }}</p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Цена: </strong>{{ item.buy3 }}</p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Пара 2: </strong><a href="{{ item.paurstart2url }}" target="_blank">{{ item.paur3 }}</a></p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Цена: </strong>{{ item.buy2 }}</p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Пара 3: </strong><a href="{{ item.paur3url }}" target="_blank">{{ item.paur2 }}</a></p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Цена: </strong>{{ item.sell1 }}</p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Пара Итог: </strong><a href="{{ item.paur2url }}" target="_blank">{{ item.paurstart2 }}</a></p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Разница: </strong>{{ item.dohodsyda }}</p>
+            </div>
+            <div class="col-12 col-md-4">
+                <p><strong>Дата: </strong>{{ item.datadohod }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card custom-table mt-2 mb-5">
+    <div class="card-body">
+        <h2>Доход назад</h2>
+        <form method="post" class="mt-2" id="calculationForm">
+            {% csrf_token %}
+            <div class="form-row align-items-center">
+                <div class="col-auto">
+                    <label for="site" class="col-form-label">Сайт:</label>
+                    <input type="text" class="form-control mb-2" id="site" name="site" value="{{ item.site }}">
+                    <input type="hidden" name="type_dohod" value="nazad">
+                </div>
+                <div class="col-auto">
+                    <label for="balance1" class="col-form-label">{{ item.paurstart2 }}:</label>
+                    
+                    <input type="hidden" name="pair_start" value="{{ item.paurstart2 }}">
+                    <input type="number" class="form-control mb-2" id="balance11" name="price_start" value="{{ USDTAll }}" step="0.001" onchange="calculate2()">  
+                </div>
+                <div class="col-auto">
+                    <label for="balance1" class="col-form-label">Смогу купить {{ item.paur3 }}:  </label>
+                    <input type="text" class="form-control mb-2" id="result21" >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">{{ item.paur3 }}:</label>
+                    <input type="hidden" name="pair1" value="{{ item.paurstart2 }}">
+                    <input type="hidden" name="one_id" value="{{ item.idpaur4 }}">
+                    <input type="hidden" name="dvizhenie_pair1" value="{{ item.dvizhenie_valut_4 }}">
+                    <input type="hidden" name="speed_pair1" value="{{ item.speed_valute_4 }}">
+                    <input type="number" class="form-control mb-2" id="balance21" name="price_pair1" value="{{ item.buy3 }}" step="0.001" onchange="calculate2()">
+                </div>
+                <div class="col-auto">
+                    <label for="balance1" class="col-form-label">Смогу купить {{ item.paur2 }}:  </label>
+                    <input type="text" class="form-control mb-2" id="result31" >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">{{ item.paur2 }}:</label>
+                    <input type="hidden" name="pair2" value="{{ item.paur3 }}">
+                    <input type="hidden" name="two_id" value="{{ item.idpaur3 }}">
+                    <input type="hidden" name="dvizhenie_pair2" value="{{ item.dvizhenie_valut_3 }}">
+                    <input type="hidden" name="speed_pair2" value="{{ item.speed_valute_3 }}">
+                    <input type="number" class="form-control mb-2" id="balance31" name="price_pair2" value="{{ item.buy2 }}" step="0.001" onchange="calculate2()">
+                </div>
+                <div class="col-auto">
+                    <label for="balance1" class="col-form-label">Смогу купить {{ item.paurstart }}:  </label>
+                    <input type="text" class="form-control mb-2" id="result41" >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">{{ item.paurstart }}:</label>
+                    <input type="hidden" name="pair_end" value="{{ item.paur2 }}">
+                    <input type="hidden" name="theer_id" value="{{ item.idpaur2 }}">
+                    <input type="hidden" name="dvizhenie_end" value="{{ item.dvizhenie_valut_2 }}">
+                    <input type="hidden" name="speed_end" value="{{ item.speed_valute_2 }}">
+                    <input type="number" class="form-control mb-2" id="balance41" name="price_end" value="{{ item.sell1 }}" step="0.001" onchange="calculate2()">
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result: </label>
+                   <input type="text" id="result1"  >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result rub: </label>
+                   <input type="text" id="resultrub1" name="dohod"  >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result fact: </label>
+                    <input type="text" id="resulfactall2" onchange="calculatefact2()" >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result fact: </label>
+                    <input type="text" id="resulfact2"  >
+                </div>
+                <div class="col-auto">
+                    <label for="balance2" class="col-form-label">Result rub fact: </label>
+                   <input type="text" id="resultrubfact2" name="fakt_dohod"  >
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-2">Отправить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+      <div class="card custom-table mt-2">
+        <div class="card-body">
+          <h3>Пара : {{pair1.pair}}</h3>
+          
+          {% if item.dvizhenie_valut_2 > 2 %}
+              <p>Движение валюты: <strong class="text-success">верх</strong></p>
+          {% elif item.dvizhenie_valut_2 < -2 %}
+              <p>Движение валюты: <strong class="text-danger" >вниз</strong></p>
+          {% else %}
+              <p>Движение валюты: среднее</p>
+          {% endif %}
+
+          {% if item.speed_valute_2 > 30 or item.speed_valute_2 < -30  %}
+              <p>Скорость движения: <strong class="text-success">быстро</strong></p>
+          {% elif item.speed_valute_2 > 5 or item.speed_valute_2 < -5%}
+              <p>Скорость движения: <strong  class="text-warning">среднее</strong></p>
+          {% else %}
+              <p>Скорость движения: медленно</p>
+          {% endif %}
+
+          <p><strong>Цена средняя: </strong>{{pair1.priсe}}</p>
+          <p><strong>Цена продажи: </strong>{{pair1.askPrice}}</p>
+          <p><strong>Минимальное кол-во: </strong>{{pair1.askSize}}</p>
+          <p><strong>Цена покупки: </strong>{{pair1.bid}}</p>
+          <p><strong>Минимальное кол-во: </strong>{{pair1.bidSize}}</p>
+          <p><strong>Последнее обновление: </strong>{{pair1.datetime_1m}}</p>
+          <p><strong>Цена 5 минут назад: </strong>{{pair1.priсe_5m}}</p>
+          <p><strong>Цена 15 минут назад: </strong>{{pair1.priсe_15m}}</p>
+          <p><strong>Цена 30 минут назад: </strong>{{pair1.priсe_30m}}</p>
+          <p><strong>Цена 1 час назад: </strong>{{pair1.priсe_1h}}</p>
+          <p><strong>Цена 3 час назад: </strong>{{pair1.priсe_3h}}</p>
+          <p><strong>Цена 6 час назад: </strong>{{pair1.priсe_6h}}</p>
+          <p><strong>Цена 1 день назад: </strong>{{pair1.priсe_1d}}</p>
+          
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card custom-table mt-2">
+        <div class="card-body">
+          <h3>Пара : {{pair2.pair}}</h3>
+          
+          {% if item.dvizhenie_valut_3 > 2 %}
+              <p>Движение валюты: <strong class="text-success">верх</strong></p>
+          {% elif item.dvizhenie_valut_3 < -2 %}
+              <p>Движение валюты: <strong class="text-danger" >вниз</strong></p>
+          {% else %}
+              <p>Движение валюты: среднее</p>
+          {% endif %}
+
+          {% if item.speed_valute_3 > 30 or item.speed_valute_3 < -30  %}
+              <p>Скорость движения: <strong class="text-success">быстро</strong></p>
+          {% elif item.speed_valute_3 > 5 or item.speed_valute_3 < -5%}
+              <p>Скорость движения: <strong  class="text-warning">среднее</strong></p>
+          {% else %}
+              <p>Скорость движения: медленно</p>
+          {% endif %}
+
+          <p><strong>Цена средняя: </strong>{{pair2.priсe}}</p>
+          <p><strong>Цена продажи: </strong>{{pair2.askPrice}}</p>
+          <p><strong>Минимальное кол-во: </strong>{{pair2.askSize}}</p>
+          <p><strong>Цена покупки: </strong>{{pair2.bid}}</p>
+          <p><strong>Минимальное кол-во: </strong>{{pair2.bidSize}}</p>
+          <p><strong>Последнее обновление: </strong>{{pair2.datetime_1m}}</p>
+          <p><strong>Цена 5 минут назад: </strong>{{pair2.priсe_5m}}</p>
+          <p><strong>Цена 15 минут назад: </strong>{{pair2.priсe_15m}}</p>
+          <p><strong>Цена 30 минут назад: </strong>{{pair2.priсe_30m}}</p>
+          <p><strong>Цена 1 час назад: </strong>{{pair2.priсe_1h}}</p>
+          <p><strong>Цена 3 час назад: </strong>{{pair2.priсe_3h}}</p>
+          <p><strong>Цена 6 час назад: </strong>{{pair2.priсe_6h}}</p>
+          <p><strong>Цена 1 день назад: </strong>{{pair2.priсe_1d}}</p>
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card custom-table mt-2">
+        <div class="card-body">
+          <h3>Пара : {{pair3.pair}}</h3>
+          
+          {% if item.dvizhenie_valut_4 > 2 %}
+              <p>Движение валюты: <strong class="text-success">верх</strong></p>
+          {% elif item.dvizhenie_valut_4 < -2 %}
+              <p>Движение валюты: <strong class="text-danger" >вниз</strong></p>
+          {% else %}
+              <p>Движение валюты: среднее</p>
+          {% endif %}
+
+          {% if item.speed_valute_4 > 30 or item.speed_valute_4 < -30  %}
+              <p>Скорость движения: <strong class="text-success">быстро</strong></p>
+          {% elif item.speed_valute_4 > 5 or item.speed_valute_4 < -5%}
+              <p>Скорость движения: <strong  class="text-warning">среднее</strong></p>
+          {% else %}
+              <p>Скорость движения: медленно</p>
+          {% endif %}
+
+          <p><strong>Цена средняя: </strong>{{pair3.priсe}}</p>
+          <p><strong>Цена продажи: </strong>{{pair3.askPrice}}</p>
+          <p><strong>Минимальное кол-во: </strong>{{pair3.askSize}}</p>
+          <p><strong>Цена покупки: </strong>{{pair3.bid}}</p>
+          <p><strong>Минимальное кол-во: </strong>{{pair3.bidSize}}</p>
+          <p><strong>Последнее обновление: </strong>{{pair3.datetime_1m}}</p>
+          <p><strong>Цена 5 минут назад: </strong>{{pair3.priсe_5m}}</p>
+          <p><strong>Цена 15 минут назад: </strong>{{pair3.priсe_15m}}</p>
+          <p><strong>Цена 30 минут назад: </strong>{{pair3.priсe_30m}}</p>
+          <p><strong>Цена 1 час назад: </strong>{{pair3.priсe_1h}}</p>
+          <p><strong>Цена 3 час назад: </strong>{{pair3.priсe_3h}}</p>
+          <p><strong>Цена 6 час назад: </strong>{{pair3.priсe_6h}}</p>
+          <p><strong>Цена 1 день назад: </strong>{{pair3.priсe_1d}}</p>
+          <p></p>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+  <script>
+    function calculate() {
+      var input1 = parseFloat(document.getElementById('balance1').value);
+      var input2 = parseFloat(document.getElementById('balance2').value);
+      var input3 = parseFloat(document.getElementById('balance3').value);
+      var input4 = parseFloat(document.getElementById('balance4').value);
+      
+      var result = (input1 / input2).toFixed(2);
+      var result2 = ( input3 * result  ).toFixed(12);
+      var result3 = ( input4 * result2 ).toFixed(12);
+      var result4 = ( result3 - input1 ).toFixed(12);
+      var result5 = ( result4 * "{{ USDT.balance }}").toFixed(12); 
+      
+      
+      
+      // Пример простого расчета, замените его на свою логику
+      console.log(result3)
+      document.getElementById('result2').value = result;
+      document.getElementById('result3').value = result2;
+      document.getElementById('result4').value = result3;
+      document.getElementById('result').value = result4;
+      document.getElementById('resultrub').value = result5;
+    }
+
+    function calculate2() {
+      var input1 = parseFloat(document.getElementById('balance11').value);
+      var input2 = parseFloat(document.getElementById('balance21').value);
+      var input3 = parseFloat(document.getElementById('balance31').value);
+      var input4 = parseFloat(document.getElementById('balance41').value);
+      
+      var result = (input1 / input2).toFixed(12);
+      var result2 = ( result / input3  ).toFixed(12);
+      var result3 = (result2  * input4 ).toFixed(12);
+      var result4 = ( result3 - input1 ).toFixed(12);
+      var result5 = ( result4 * "{{ USDT.balance }}").toFixed(12);  // Пример простого расчета, замените его на свою логику
+      console.log(result2)
+      document.getElementById('result21').value = result;
+      document.getElementById('result31').value = result2;
+      document.getElementById('result41').value = result3;
+      document.getElementById('result1').value = result4;
+      document.getElementById('resultrub1').value = result5;
+    }
+
+    function calculatefact(){
+        var start = parseFloat(document.getElementById('balance1').value);
+        var end = parseFloat(document.getElementById('resulfactall').value);
+
+        var itog = (end - start).toFixed(12)
+        var itogrub = ( itog * "{{ USDT.balance }}").toFixed(12)
+        document.getElementById('resulfact').value = itog
+        document.getElementById('resultrubfact').value = itogrub
+    }
+
+    function calculatefact2(){
+        var start = parseFloat(document.getElementById('balance11').value);
+        var end = parseFloat(document.getElementById('resulfactall2').value);
+
+        var itog = (end - start).toFixed(12)
+        var itogrub = ( itog * "{{ USDT.balance }}").toFixed(12)
+        document.getElementById('resulfact2').value = itog
+        document.getElementById('resultrubfact2').value = itogrub
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        stepchnge("{{ USDTAll }}", 'balance1')
+        stepchnge("{{ item.buy1 }}", 'balance2')
+        stepchnge("{{ item.sell2 }}", 'balance3')
+        stepchnge("{{ item.sell3 }}", 'balance4')
+        stepchnge("{{ USDTAll }}", 'balance11')
+        stepchnge("{{ item.buy3 }}", 'balance21')
+        stepchnge("{{ item.buy2 }}", 'balance31')
+        stepchnge("{{ item.sell1 }}", 'balance41')
+        
+    });
+
+
+
+
+    function stepchnge(name, id){
+        var sell1Value = parseFloat(name);
+        var stepValue = sell1Value % 1 === 0 ? 1 : 1 / Math.pow(10, sell1Value.toString().split(".")[1].length);
+        document.getElementById(id).step = stepValue;
+
+    }
+  </script>
+
+
+{% endblock %}

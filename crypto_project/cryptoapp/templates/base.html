@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+      h1 {
+        display: inline-block;
+        margin-right: 20px;
+      }
+      
+      body {
+        background-color: rgb(61, 61, 61);
+      }
+      .navbar {
+        background-color: #f8f9fa; /* Цвет фона */
+      }
+
+      .navbar-brand {
+        font-size: 1.5em; /* Размер шрифта */
+        color: #007bff; /* Цвет ссылки */
+        text-transform: uppercase; /* Текст в верхнем регистре */
+      }
+
+      .navbar-nav {
+        margin-left: auto; /* Расположение элементов справа */
+      }
+
+      .navbar-nav .nav-link {
+        color: #007bff; /* Цвет ссылок */
+        margin-right: 20px; /* Отступы между ссылками */
+        font-weight: bold; /* Жирный текст */
+      }
+
+      .navbar-nav .nav-link:hover {
+        color: #0056b3; /* Цвет ссылки при наведении */
+      }
+
+      .btn-outline-success {
+        color: #28a745; /* Цвет текста кнопки */
+        border-color: #28a745; /* Цвет рамки кнопки */
+      }
+      .btn-outline-success:hover {
+        color: #fff; /* Цвет текста кнопки при наведении */
+        background-color: #28a745; /* Фон кнопки при наведении */
+        border-color: #28a745; /* Цвет рамки кнопки при наведении */
+      }
+      .btn-custom {
+        color: #fff;
+        background-color: #007bff;
+        border: 1px solid #007bff;
+      }
+      .btn-custom:hover {
+          background-color: #0056b3;
+          border: 1px solid #0056b3;
+      }
+    </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="#">Your Website</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          
+          {% if user.is_authenticated %}
+          <li class="nav-item mr-5">  {% block balance %}{% endblock %}</li>
+          <!-- <li class="nav-item">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-success my-2 my-sm-0">Общие валюты</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'dashboardprice2' %}" class="btn btn-outline-success my-2 my-sm-0">Торговля треугольником</a>
+          </li> -->
+          <li class="nav-item">
+            <a href="{% url 'trade_pair_list' %}" class="btn btn-outline-success my-2 my-sm-0">Торговля новым треугольником</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'trade_pair_list_rsi' user.username %}" class="btn btn-outline-success my-2 my-sm-0">Торговля rsi</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'logout' %}" class="btn btn-outline-success my-2 my-sm-0">Exit</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-3">
+    {% block content %}
+      <!-- Основное содержимое страницы -->
+    {% endblock %}
+  </div>
+
+  <!-- <div id="menu" class="fixed-bottom bg-light p-3 " style="max-height: 30vh; overflow: auto;">
+    <div class="d-flex justify-content-center">
+    {% include 'active_base.html' %}
+    </div>
+  </div> -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

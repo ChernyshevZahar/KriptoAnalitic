@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Rsi{% endblock %}
+{% block balance %} Баланс денег: {{balanse}}  р.{% endblock %}
+
+
+{% block content %}
+<div class="card mb-3 shadow-sm justify-content-center " style="background-color: rgb(105, 105, 105);">
+  <form action="{% url 'update-trade-utm' user.username %}" method="post" class="row g-3 p-3"> 
+    {% csrf_token %}
+    <div class="col-md-5"> 
+      <label for="fakt_dohod" class="col-form-label" style="color: aliceblue;">сортировка по RSI</label>
+      <select name="sort_rsi" class="form-control">
+        <option value="" {% if select.utm == 'None' %}selected{% endif %}>None</option>
+        <option value="pair_rsi_up" {% if select.utm == 'pair_rsi_up' %}selected{% endif %}>Rsi снизу</option>
+        <option value="pair_rsi_down" {% if select.utm == 'pair_rsi_down' %}selected{% endif %}>Rsi сверху</option>
+      </select>
+    </div>
+    <div class="col-md-5"> 
+      <label for="fakt_dohod" class="col-form-label" style="color: aliceblue;"> Top пары</label>
+      <select name="sort_top" class="form-control" >
+        <option value="on" {% if select2.utm == 'on' %}selected{% endif %}>Вкл</option>
+        <option value="off" {% if select2.utm == 'off' %}selected{% endif %}>Выкл</option>
+      </select>
+    </div>
+
+    <div class="col-md-2"> 
+      <button type="submit" class="btn btn-primary">Фильтровать</button>
+    </div>
+    
+  </form>
+</div>
+<div class="card-container">
+    
+    {% for item in trade_pairs %}
+      {% if item.pair_up != '0' and item.pair_down != '0' %}
+
+    
+
+      </div>
+        <div class="card mb-3 shadow-sm justify-content-center">
+        <form method="post"  >
+          {% csrf_token %}
+          <div class="card-body">
+            <h5 class="card-title text-primary">
+              Сайт: <span class=" text-muted">{{ item.site }}</span>
+              <input type="hidden" name="site" value="{{ item.site }}">
+              <input type="hidden" name="way_pair" value="0">
+              <input type="hidden" name="price_pair" value="{{ item.pair_price }}">
+              <input type="hidden" name="user" value="{{ user.username }}">
+              <small class="text-muted"
+                > <small class="text-muted">Время обновления: {{ item.up_Data }}</small>
+                <input type="hidden" name="up_Data" value="{{ item.up_Data }}">
+              </small>
+            </h5>
+            <div class="row g-2">
+              <div class="col-sm-1 col-md-2">
+                <div class="card mb-2 border-0">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Пара</h6>
+                    <a href="https://www.bybit.com/ru-RU/trade/spot/{{ item.pair|slice:':-4' }}/USDT" target="_blank">{{ item.pair }}</a>
+                    <input type="hidden" name="lisen_pair" value="{{ item.pair }}">
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1 col-md-2">
+                <div class="card mb-2 border-0">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">RSI</h6>
+                    <input type="text" name="pair_rsi" value="{{ item.pair_rsi }}" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1 col-md-2">
+                <div class="card mb-2 border-0">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Верхняя граница</h6>
+                    <input type="text" name="pair_up" value="{{ item.pair_up }}" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1 col-md-2">
+                <div class="card mb-2 border-0">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Цена</h6>
+                    <input type="text" name="pair_price" value="{{ item.pair_price }}" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1 col-md-2">
+                <div class="card mb-2 border-0">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Нижняя граница</h6>
+                    <input type="text" name="pair_down" value="{{ item.pair_down }}" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto">
+                <label for="option1">Top</label>
+                <input type="checkbox" id="option1" name="norm"  {% if item.norm %}checked{% endif %}>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Торговать</button>
+            <button type="submit" class="btn btn-danger me-2" formaction="{% url 'delete_trade_pair_off'  user.username item.id %}">Удалить</button> 
+            <button type="submit" class="btn btn-primary" formaction="{% url 'update_trade_pair_off'   user.username  item.id%}">Обновить</button> 
+        
+          
+        </form>
+      </div> 
+      {% endif %}
+      
+    {% endfor %}
+
+    <div id="menu" class="fixed-bottom bg-light p-3 " style="max-height: 30vh; overflow: auto;">
+      <div class="d-flex justify-content-center">
+      {% include 'active_base_rsi.html' %}
+      </div>
+    </div>
+
+
+    <script>
+      function changeSort(params,sort) {
+      var currentUrl = window.location.href;  // Получаем текущий URL
+      var sortParam = params;  // Значение параметра sort по умолчанию
+      var newSort;
+    
+      if (currentUrl.includes(sort+'=')) {
+        var url = new URL(currentUrl);
+        var searchParams = new URLSearchParams(url.search);
+        sortParamr = searchParams.get(sort);  // Получаем текущее значение параметра sort
+        newSort = (sortParamr === sortParam) ? '-'+params : params;  // Изменяем значение параметра sort
+        searchParams.set(sort, newSort);  // Обновляем значение параметра sort
+        url.search = searchParams.toString();  // Устанавливаем новые параметры запроса
+        window.location.href = url.toString();  // Перенаправляем пользователя на новый URL
+      } else {
+        newSort = sortParam;  // Изменяем значение параметра sort
+        var separator = (currentUrl.indexOf('?') !== -1) ? '&' : '?';
+        window.location.href =  '?'+ sort+'=' + newSort;  // Добавляем новый параметр sort
+      }
+    }
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,113 @@
+<ul>
+    {% for item in menu_items %}
+      <div class="card custom-table mt-1 mb-1">
+        <div class="card-body">
+          <form method="post" action="{% url 'update_trade_pair'  item.id  %}">
+                {% csrf_token %}
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                      <label for="site" class="col-form-label">{{ item.site }}:</label>
+                      <input type="hidden" name="site" value="{{ item.site }}"> 
+                      <input type="hidden" name="id" value="{{ item.id }}">
+                    </div>
+                    <div class="col-auto">
+                      <label for="pair_step_1_price" class="col-form-label">USDT:</label>
+                      <input type="text" class="form-control mb-2" name="pair_step_1_price" value="{{ USDTAll }}" id="balance11_{{ item.id }}" onchange="calculate2('{{ item.id }}')">
+                    </div>
+                    <div class="col-auto">
+                      <label for="pair_step_1_price" class="col-form-label">{{ item.pair_step_1_pair2 }}:</label>
+                      <input type="hidden" name="pair_step_1_pair2" value="{{ item.pair_step_1_pair2 }}"> 
+                      <input type="text" class="form-control mb-2" name="pair_step_1_price" value="{{ item.pair_step_1_price }}" id="balance21_{{ item.id }}" onchange="calculate2('{{ item.id }}')">
+                    </div>
+                    <div class="col-auto">
+                      <label for="pair_step_2_price" class="col-form-label">{{ item.pair_step_2_pair2 }}:</label>
+                      <input type="hidden" name="pair_step_2_pair2" value="{{ item.pair_step_2 }}"> 
+                      <input type="text" class="form-control mb-2" name="pair_step_2_price" value="{{ item.pair_step_2_price }}" id="balance31_{{ item.id }}" onchange="calculate2('{{ item.id }}')">
+                    </div>
+                    <div class="col-auto">
+                      <label for="pair_step_3_price" class="col-form-label">{{ item.pair_step_3_pair2 }}:</label>
+                      <input type="hidden" name="pair_step_3_pair2" value="{{ item.pair_step_3 }}"> 
+                      <input type="text" class="form-control mb-2" name="pair_step_3_price" value="{{ item.pair_step_3_price }}" id="balance41_{{ item.id }}" onchange="calculate2('{{ item.id }}')">
+                    </div>
+                    <div class="col-auto">
+                      <label for="fakt_dohod" class="col-form-label">Фактический доход USDT:</label>
+                      <input type="text" class="form-control mb-2" name="fakt_dohod" value="{{ item.fakt_dohod }}" id="result1_{{ item.id }}">
+                    </div>
+                    <div class="col-auto">
+                      <label for="fakt_dohod" class="col-form-label">{{item.lisen_pair}}</label>
+                      <select name="lisen_pair" class="form-control mb-2">
+                        <option value="{{ item.pair_step_1_pair2 }}">{{ item.pair_step_1_pair2 }}</option>
+                        <option value="{{ item.pair_step_2_pair2 }}">{{ item.pair_step_2_pair2 }}</option>
+                        <option value="{{ item.pair_step_3_pair2 }}">{{ item.pair_step_3_pair2 }}</option>
+                      </select>
+                    </div>
+                    <div class="col-auto">
+                      <label for="way_pair" class="col-form-label">{{item.way_pair}}</label>
+                      <select name="way_pair" class="form-control mb-2">
+                        <option value="1">Купить</option>
+                        <option value="0">Продать</option>
+                      </select>
+                    </div>
+                    <div class="col-auto">
+                      <label for="pair_step_3_price" class="col-form-label">Цена</label>
+                      <input type="text" class="form-control mb-2" name="price_pair" value="{{ item.price_pair }}" >
+                    </div>
+                    
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-2">Обновить</button>
+                    </div>
+
+                </div>
+            </form>
+            <form method="post" action="{% url 'delete_trade_pair' item.id %}">
+              {% csrf_token %}
+              <button type="submit">Удалить</button>
+          </form>
+        </div>
+      </div>
+      
+    {% endfor %}
+    <script>
+      function calculate2(id) {
+        console.log(input1)
+        var input1 = parseFloat(document.getElementById('balance11_'+id).value);
+        var input2 = parseFloat(document.getElementById('balance21_'+id).value);
+        var input3 = parseFloat(document.getElementById('balance31_'+id).value);
+        var input4 = parseFloat(document.getElementById('balance41_'+id).value);
+        console.log(input1)
+        var result = (input1 / input2).toFixed(12);
+        var result2 = ( input3 * result  ).toFixed(12);
+        var result3 = ( input4 * result2 ).toFixed(12);
+        var result4 = ( result3 - input1 ).toFixed(12);
+        var result5 = ( result4 * 91).toFixed(12); 
+        // console.log(result4)
+        
+        
+        // Пример простого расчета, замените его на свою логику
+        // console.log(result)
+        
+        document.getElementById('result1_'+id).value = result4;
+        // document.getElementById('resultrub').value = result5;
+      }
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     stepchnge2("{{ USDTAll }}", 'balance11')
+        //     stepchnge2("{{ item.pair_step_1_price }}", 'balance21')
+        //     stepchnge2("{{ item.pair_step_2_price }}", 'balance31')
+        //     stepchnge2("{{ item.pair_step_3_price }}", 'balance41')
+            
+        // });
+    
+    
+    
+    
+        // function stepchnge2(name, id){
+        //     var sell1Value = parseFloat(name);
+        //     var stepValue = sell1Value % 1 === 0 ? 1 : 1 / Math.pow(10, sell1Value.toString().split(".")[1].length);
+        //     document.getElementById(id).step = stepValue;
+    
+        // }
+
+        
+    
+    </script>
+</ul>

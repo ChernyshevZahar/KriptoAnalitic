@@ -1,0 +1,38 @@
+{% for item in menu_items %}
+    {% if user.username == item.user  %}
+      <div class="card custom-table mt-1 mb-1">
+        <div class="card-body">
+          <form method="post" action="{% url 'update_trade_pair_rsi' user.username item.id  %}">
+                {% csrf_token %}
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                      <label for="site" class="col-form-label">{{ item.site }}:</label>
+                      <input type="text" class="form-control mb-2 w-10" name="lisen_pair" value="{{ item.pair }}" >
+                      <input type="hidden" name="id" value="{{ item.id }}">
+                    </div>
+                    
+                    <div class="col-auto">
+                      <label for="way_pair" class="col-form-label">{{item.way_pair}}</label>
+                      <select name="way_pair" class="form-control mb-2">
+                        <option value="1">Купить</option>
+                        <option value="0">Продать</option>
+                      </select>
+                    </div>
+                    <div class="col-auto">
+                      <label for="pair_step_3_price" class="col-form-label">Цена</label>
+                      <input type="text" class="form-control mb-2" name="price_pair" value="{{ item.price_pair }}" >
+                    </div>
+                    
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-2">Обновить</button>
+                    </div>
+                </div>
+            </form>
+            <form method="post" action="{% url 'delete_trade_pair_rsi' user.username item.id %}">
+              {% csrf_token %}
+              <button type="submit">Удалить</button>
+          </form>
+        </div>
+      </div>
+    {% endif %}      
+{% endfor %}
